@@ -1,0 +1,19 @@
+[
+  { "sku": "BT26-BOX", "type": "BOOSTER_BOX",
+    "name": "BT26 Timeless Bonds Booster Box (24 gói)",
+    "setCode": "BT26", "setName": "BT-26: Timeless Bonds",
+    "packsPerBox": 24, "cardsPerPack": 12,
+    "price": 2500000, "stock": 10, "image": "/card-images/BT26-BOX.webp" },
+
+  { "sku": "BT26-PACK", "type": "BOOSTER_PACK",
+    "name": "BT26 Timeless Bonds Booster Pack (12 thẻ)",
+    "setCode": "BT26", "setName": "BT-26: Timeless Bonds",
+    "cardsPerPack": 12,
+    "price": 120000, "stock": 100, "image": "/card-images/BT26-PACK.webp" },
+
+  { "sku": "ST23-DECK", "type": "STARTER_DECK",
+    "name": "ST23 Starter Deck (54 thẻ)",
+    "setCode": "ST23", "setName": "ST-23",
+    "cardsPerDeck": 54,
+    "price": 250000, "stock": 30, "image": "/card-images/ST23-DECK.webp" }
+]

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav th:fragment="adminNav" class="navbar navbar-expand navbar-dark bg-secondary mb-4">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/admin}">DigiShop Admin</a>
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                <a class="nav-link" th:href="@{/admin/dashboard}">Thống kê</a></li>
+            <li class="nav-item"><a class="nav-link" th:href="@{/admin/orders}">Đơn hàng</a></li>
+            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                <a class="nav-link" th:href="@{/admin/products}">Sản phẩm</a></li>
+        </ul>
+        <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item"><a class="nav-link" th:href="@{/cards}">Xem cửa hàng</a></li>
+            <li class="nav-item">
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-link nav-link">
+                        Đăng xuất (<span sec:authentication="name"></span>)
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</nav>
+</body>
+</html>
