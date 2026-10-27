@@ -21,4 +21,7 @@ public class CheckoutForm {
 
     @Pattern(regexp = "COD|BANK_TRANSFER", message = "Phương thức thanh toán không hợp lệ")
     private String paymentMethod = "COD";
+
+    @Size(max = 40, message = "Mã giảm giá quá dài")
+    private String couponCode;
 }

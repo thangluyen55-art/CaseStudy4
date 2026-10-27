@@ -36,6 +36,14 @@
                     <div class="invalid-feedback" th:errors="*{address}"></div>
                 </div>
 
+                <h5 class="mb-2">Mã giảm giá</h5>
+                <div class="input-group mb-1">
+                    <input type="text" th:field="*{couponCode}" id="couponCode" class="form-control"
+                           placeholder="Nhập mã (nếu có)">
+                    <button type="button" class="btn btn-outline-secondary" id="applyCoupon">Áp dụng</button>
+                </div>
+                <div class="small mb-3" id="couponMsg"></div>
+
                 <h5 class="mb-2">Phương thức thanh toán</h5>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" th:field="*{paymentMethod}" value="COD" id="pm1">
@@ -73,10 +81,15 @@
                         <span>Phí vận chuyển</span>
                         <span th:text="${#numbers.formatDecimal(shippingFee, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
                     </div>
+                    <div class="d-flex justify-content-between text-success d-none" id="discountRow">
+                        <span>Giảm giá</span>
+                        <span id="discountValue"></span>
+                    </div>
                     <hr>
                     <div class="d-flex justify-content-between fs-5 fw-bold">
                         <span>Tổng cộng</span>
-                        <span class="text-danger"
+                        <span class="text-danger" id="totalAmount"
+                              th:data-base="${cart.total.add(shippingFee)}"
                               th:text="${#numbers.formatDecimal(cart.total.add(shippingFee), 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
                     </div>
                 </div>
@@ -84,5 +97,32 @@
         </div>
     </div>
 </div>
+
+<script>
+    const fmt = n => Number(n).toLocaleString('en-US') + ' đ';
+    document.getElementById('applyCoupon').addEventListener('click', async () => {
+        const code = document.getElementById('couponCode').value.trim();
+        const msg = document.getElementById('couponMsg');
+        const row = document.getElementById('discountRow');
+        const total = document.getElementById('totalAmount');
+        const reset = () => { row.classList.add('d-none'); total.textContent = fmt(total.dataset.base); };
+
+        if (!code) { msg.textContent = ''; reset(); return; }
+        try {
+            const res = await fetch('/checkout/coupon-preview?code=' + encodeURIComponent(code));
+            const data = await res.json();
+            msg.className = 'small mb-3 ' + (data.valid ? 'text-success' : 'text-danger');
+            msg.textContent = data.message;
+            if (data.valid) {
+                document.getElementById('discountValue').textContent = '- ' + fmt(data.discount);
+                row.classList.remove('d-none');
+                total.textContent = fmt(data.total);
+            } else { reset(); }
+        } catch (e) {
+            msg.className = 'small mb-3 text-danger';
+            msg.textContent = 'Không kiểm tra được mã, thử lại sau';
+        }
+    });
+</script>
 </body>
 </html>

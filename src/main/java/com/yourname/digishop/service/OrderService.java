@@ -21,6 +21,7 @@ public class OrderService {
     private final CartRepository carts;
     private final ProductRepository products;
     private final OrderRepository orders;
+    private final CouponService couponService;
 
     @Transactional(rollbackFor = Exception.class)
     public Order placeOrder(String email, CheckoutForm form) {
@@ -36,7 +37,7 @@ public class OrderService {
         order.setPaymentMethod(form.getPaymentMethod());
         order.setStatus(OrderStatus.PENDING);
 
-        // Khóa sản phẩm theo thứ tự id tăng dần để tránh deadlock khi nhiều người mua cùng lúc
+        // Khóa sản phẩm theo thứ tự id tăng dần để tránh deadlock
         List<CartItem> sorted = new ArrayList<>(cart.getItems());
         sorted.sort(Comparator.comparing(ci -> ci.getProduct().getId()));
 
@@ -50,25 +51,33 @@ public class OrderService {
                 throw new BusinessException("Không đủ hàng: \"" + p.getDisplayName()
                         + "\" (còn " + p.getStock() + ")");
 
-            p.setStock(p.getStock() - ci.getQuantity());         // trừ kho
+            p.setStock(p.getStock() - ci.getQuantity());
 
             OrderItem oi = new OrderItem();
             oi.setOrder(order);
             oi.setProduct(p);
             oi.setQuantity(ci.getQuantity());
-            oi.setUnitPrice(p.getPrice());                       // lưu giá lúc mua
+            oi.setUnitPrice(p.getPrice());
             order.getItems().add(oi);
 
             subtotal = subtotal.add(p.getPrice().multiply(BigDecimal.valueOf(ci.getQuantity())));
         }
 
+        // Mã giảm giá (tùy chọn)
+        BigDecimal discount = BigDecimal.ZERO;
+        String code = form.getCouponCode();
+        if (code != null && !code.isBlank()) {
+            discount = couponService.redeem(code, subtotal);
+            order.setCouponCode(code.trim().toUpperCase());
+        }
+
         order.setSubtotal(subtotal);
         order.setShippingFee(SHIPPING_FEE);
-        order.setDiscount(BigDecimal.ZERO);                      // mã giảm giá làm ở Sprint 6
-        order.setTotalAmount(subtotal.add(SHIPPING_FEE));
+        order.setDiscount(discount);
+        order.setTotalAmount(subtotal.add(SHIPPING_FEE).subtract(discount));
 
         orders.save(order);
-        cart.getItems().clear();                                 // dọn giỏ
+        cart.getItems().clear();
         return order;
     }
 
@@ -96,6 +105,7 @@ public class OrderService {
             Product p = products.findByIdForUpdate(oi.getProduct().getId()).orElseThrow();
             p.setStock(p.getStock() + oi.getQuantity());
         }
+        couponService.release(order.getCouponCode());            // hoàn lượt dùng mã
         order.setStatus(OrderStatus.CANCELLED);
     }
 }

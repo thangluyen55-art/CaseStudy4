@@ -25,7 +25,8 @@ public class Order {
     private String receiverName;
     private String phone;
     private String shippingAddress;
-    private String paymentMethod;                 // COD, BANK_TRANSFER
+    private String paymentMethod;
+    private String couponCode;          // COD, BANK_TRANSFER
 
     @Column(precision = 12, scale = 0)
     private BigDecimal subtotal = BigDecimal.ZERO;

@@ -23,6 +23,7 @@ import java.util.Map;
 public class AdminOrderService {
     private final OrderRepository orders;
     private final ProductRepository products;
+    private final CouponService couponService;      // thêm cạnh orders, products
 
     // Máy trạng thái: trạng thái hiện tại -> các trạng thái được phép chuyển tới
     private static final Map<OrderStatus, List<OrderStatus>> NEXT = Map.of(
@@ -61,6 +62,7 @@ public class AdminOrderService {
                 Product p = products.findByIdForUpdate(oi.getProduct().getId()).orElseThrow();
                 p.setStock(p.getStock() + oi.getQuantity());
             }
+            couponService.release(order.getCouponCode());
         }
         order.setStatus(next);
     }

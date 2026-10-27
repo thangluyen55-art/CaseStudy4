@@ -67,6 +67,13 @@
                 <button type="submit" class="btn btn-primary text-nowrap">Thêm vào giỏ</button>
             </form>
 
+            <form sec:authorize="hasRole('CUSTOMER')" th:action="@{/wishlist/toggle}" method="post" class="d-inline-block mt-2">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <button type="submit" class="btn"
+                        th:classappend="${wishlisted} ? 'btn-danger' : 'btn-outline-danger'"
+                        th:text="${wishlisted} ? '♥ Đã yêu thích' : '♡ Yêu thích'"></button>
+            </form>
+
             <a th:if="${product.stock > 0}" sec:authorize="!isAuthenticated()" th:href="@{/login}"
                class="btn btn-outline-primary">Đăng nhập để mua</a>
         </div>

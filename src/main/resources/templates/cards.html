@@ -106,24 +106,26 @@
                             <small th:class="${p.stock > 0} ? 'text-success' : 'text-danger'"
                                    th:text="${p.stock > 0} ? 'Còn ' + ${p.stock} : 'Hết hàng'"></small>
 
-                            <!-- Thẻ lẻ: chọn tình trạng ở trang chi tiết -->
-                            <a th:if="${p.single}" th:href="@{/products/{id}(id=${p.id})}"
-                               class="btn btn-sm btn-outline-primary w-100 mt-auto">Chọn tình trạng</a>
-
-                            <!-- Hàng sealed: thêm vào giỏ ngay -->
-                            <div th:unless="${p.single}" class="mt-auto pt-2">
+                            <div class="mt-auto pt-2">
                                 <button th:if="${p.stock <= 0}" class="btn btn-sm btn-secondary w-100" disabled>
                                     Hết hàng</button>
 
+                                <!-- Khách hàng: thêm vào giỏ ngay (thẻ lẻ thêm đúng tình trạng đang hiển thị) -->
                                 <form th:if="${p.stock > 0}" sec:authorize="hasRole('CUSTOMER')"
                                       th:action="@{/cart/add}" method="post">
                                     <input type="hidden" name="productId" th:value="${p.id}">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button type="submit" class="btn btn-sm btn-primary w-100">Thêm vào giỏ</button>
+                                    <button type="submit" class="btn btn-sm btn-primary w-100"
+                                            th:text="${p.single} ? 'Thêm vào giỏ (' + ${p.cardCondition} + ')' : 'Thêm vào giỏ'"></button>
                                 </form>
 
+                                <!-- Chưa đăng nhập -->
                                 <a th:if="${p.stock > 0}" sec:authorize="!isAuthenticated()" th:href="@{/login}"
                                    class="btn btn-sm btn-outline-primary w-100">Đăng nhập để mua</a>
+
+                                <!-- Thẻ lẻ: xem các tình trạng khác -->
+                                <a th:if="${p.single}" th:href="@{/products/{id}(id=${p.id})}"
+                                   class="d-block text-center small mt-1">Xem các tình trạng khác</a>
                             </div>
                         </div>
                     </div>

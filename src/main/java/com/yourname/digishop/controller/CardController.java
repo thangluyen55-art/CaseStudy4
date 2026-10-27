@@ -4,6 +4,7 @@ import com.yourname.digishop.dto.ProductFilter;
 import com.yourname.digishop.entity.*;
 import com.yourname.digishop.repository.CardSetRepository;
 import com.yourname.digishop.service.ProductService;
+import com.yourname.digishop.service.WishlistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CardController {
     private final ProductService productService;
     private final CardSetRepository setRepo;
+    private final WishlistService wishlistService;
 
     @GetMapping("/cards")
     public String list(ProductFilter filter,
@@ -29,4 +31,5 @@ public class CardController {
         model.addAttribute("conditions", CardCondition.values());
         return "cards";
     }
+
 }

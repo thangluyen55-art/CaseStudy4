@@ -33,4 +33,5 @@ public interface ProductRepository
     Page<Product> adminSearch(@Param("kw") String keyword, Pageable pageable);
 
     List<Product> findByActiveTrueAndStockLessThanEqualOrderByStockAsc(int stock, Pageable pageable);
+    List<Product> findByCardIdAndActiveTrueAndStockGreaterThanOrderByPriceDesc(Long cardId, int stock);
 }
