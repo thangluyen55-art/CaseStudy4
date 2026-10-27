@@ -5,139 +5,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DigiShop - Digimon Card Game</title>
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .product-img { aspect-ratio: 5 / 7; object-fit: contain; background: #f8f9fa; }
-        .product-card:hover { box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); }
-    </style>
+    <!-- Style CSS tùy chỉnh -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
 <div th:replace="~{layout/layout :: navbar}"></div>
 
-<div class="container">
+<div class="container py-3">
     <div th:replace="~{layout/layout :: alerts}"></div>
 
-    <div class="row">
-        <!-- Bộ lọc -->
-        <aside class="col-md-3 mb-4">
-            <form method="get" th:action="@{/cards}" class="card card-body">
-                <div class="mb-2">
-                    <label class="form-label">Tìm kiếm</label>
+    <div class="row g-4">
+        <!-- Sidebar bộ lọc (Filter Panel) -->
+        <aside class="col-lg-3">
+            <form method="get" th:action="@{/cards}" class="filter-card p-3">
+                <h5 class="fw-bold mb-3 text-info text-uppercase" style="letter-spacing: 1px;">
+                    <i class="bi bi-funnel"></i> Bộ Lọc Tìm Kiếm
+                </h5>
+
+                <div class="mb-3">
+                    <label class="form-label">Tên hoặc Mã thẻ</label>
                     <input type="text" name="keyword" class="form-control"
-                           th:value="${filter.keyword}" placeholder="Tên hoặc mã thẻ">
+                           th:value="${filter.keyword}" placeholder="Ví dụ: Agumon, BT1-009...">
                 </div>
-                <div class="mb-2">
+
+                <div class="mb-3">
                     <label class="form-label">Loại hàng</label>
                     <select name="productType" class="form-select">
-                        <option value="">Tất cả</option>
+                        <option value="">-- Tất cả --</option>
                         <option th:each="t : ${productTypes}" th:value="${t}" th:text="${t}"
                                 th:selected="${t == filter.productType}"></option>
                     </select>
                 </div>
-                <div class="mb-2">
-                    <label class="form-label">Set</label>
+
+                <div class="mb-3">
+                    <label class="form-label">Bộ thẻ (Set)</label>
                     <select name="setId" class="form-select">
-                        <option value="">Tất cả</option>
+                        <option value="">-- Tất cả --</option>
                         <option th:each="s : ${sets}" th:value="${s.id}"
                                 th:text="${s.code + ' - ' + s.name}"
                                 th:selected="${s.id == filter.setId}"></option>
                     </select>
                 </div>
-                <div class="mb-2">
-                    <label class="form-label">Màu</label>
+
+                <div class="mb-3">
+                    <label class="form-label">Màu sắc</label>
                     <select name="color" class="form-select">
-                        <option value="">Tất cả</option>
+                        <option value="">-- Tất cả màu --</option>
                         <option th:each="c : ${colors}" th:value="${c}" th:text="${c}"
                                 th:selected="${c == filter.color}"></option>
                     </select>
                 </div>
-                <div class="mb-2">
-                    <label class="form-label">Độ hiếm</label>
+
+                <div class="mb-3">
+                    <label class="form-label">Độ hiếm (Rarity)</label>
                     <select name="rarity" class="form-select">
-                        <option value="">Tất cả</option>
+                        <option value="">-- Tất cả độ hiếm --</option>
                         <option th:each="r : ${rarities}" th:value="${r}" th:text="${r}"
                                 th:selected="${r == filter.rarity}"></option>
                     </select>
                 </div>
-                <div class="mb-2">
-                    <label class="form-label">Tình trạng</label>
+
+                <div class="mb-3">
+                    <label class="form-label">Tình trạng thẻ</label>
                     <select name="cardCondition" class="form-select">
-                        <option value="">Tất cả</option>
+                        <option value="">-- Tất cả tình trạng --</option>
                         <option th:each="c : ${conditions}" th:value="${c}" th:text="${c}"
                                 th:selected="${c == filter.cardCondition}"></option>
                     </select>
                 </div>
+
                 <div class="row g-2 mb-3">
-                    <div class="col"><input type="number" name="minPrice" class="form-control"
-                                            placeholder="Giá từ" th:value="${filter.minPrice}"></div>
-                    <div class="col"><input type="number" name="maxPrice" class="form-control"
-                                            placeholder="Đến" th:value="${filter.maxPrice}"></div>
+                    <label class="form-label">Khoảng giá (VNĐ)</label>
+                    <div class="col-6">
+                        <input type="number" name="minPrice" class="form-control" placeholder="Tối thiểu" th:value="${filter.minPrice}">
+                    </div>
+                    <div class="col-6">
+                        <input type="number" name="maxPrice" class="form-control" placeholder="Tối đa" th:value="${filter.maxPrice}">
+                    </div>
                 </div>
-                <button class="btn btn-primary w-100">Lọc</button>
-                <a th:href="@{/cards}" class="btn btn-link w-100">Xóa bộ lọc</a>
+
+                <button class="btn btn-digi w-100 py-2 mb-2">Áp Dụng Bộ Lọc</button>
+                <a th:href="@{/cards}" class="btn btn-outline-secondary w-100 btn-sm">Xóa lọc</a>
             </form>
         </aside>
 
-        <!-- Danh sách sản phẩm -->
-        <main class="col-md-9">
-            <p class="text-muted" th:text="${page.totalElements} + ' sản phẩm'"></p>
-            <div class="alert alert-warning" th:if="${page.empty}">Không tìm thấy sản phẩm phù hợp.</div>
+        <!-- Danh sách thẻ bài (Main Grid) -->
+        <main class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted" th:text="'Tìm thấy ' + ${page.totalElements} + ' thẻ bài'"></span>
+            </div>
 
-            <div class="row row-cols-2 row-cols-lg-3 g-3">
+            <div class="alert alert-dark border-secondary text-center py-4" th:if="${page.empty}">
+                Không tìm thấy thẻ bài phù hợp với bộ lọc.
+            </div>
+
+            <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-3">
                 <div class="col" th:each="p : ${page.content}">
-                    <div class="card h-100 product-card">
-                        <a th:href="@{/products/{id}(id=${p.id})}">
-                            <img th:src="${p.image != null} ? ${p.image} : '/images/no-image.svg'"
-                                 onerror="this.onerror=null; this.src='/images/no-image.svg'"
-                                 class="card-img-top product-img" th:alt="${p.displayName}" loading="lazy">
-                        </a>
-                        <div class="card-body d-flex flex-column">
-                            <h6 class="card-title">
+                    <div class="tcg-card h-100 d-flex flex-column">
+                        <!-- Hình ảnh thẻ bài -->
+                        <div class="tcg-img-wrapper">
+                            <a th:href="@{/products/{id}(id=${p.id})}" class="w-100 text-center">
+                                <img th:src="${p.image != null} ? ${p.image} : '/images/no-image.svg'"
+                                     onerror="this.onerror=null; this.src='/images/no-image.svg'"
+                                     class="tcg-card-img" th:alt="${p.displayName}" loading="lazy">
+                            </a>
+                        </div>
+
+                        <!-- Nội dung thẻ -->
+                        <div class="p-3 d-flex flex-column flex-grow-1">
+                            <h6 class="fw-bold mb-1 text-truncate">
                                 <a th:href="@{/products/{id}(id=${p.id})}" th:text="${p.displayName}"
-                                   class="text-decoration-none text-dark"></a>
+                                   class="text-decoration-none text-light" th:title="${p.displayName}"></a>
                             </h6>
-                            <div class="mb-2">
+
+                            <!-- Badges thông tin -->
+                            <div class="d-flex flex-wrap gap-1 mb-2">
                                 <span class="badge bg-secondary" th:text="${p.productType}"></span>
-                                <span class="badge bg-info text-dark" th:if="${p.cardCondition != null}"
-                                      th:text="${p.cardCondition}"></span>
+                                <span class="badge bg-info text-dark" th:if="${p.cardCondition != null}" th:text="${p.cardCondition}"></span>
+                                <span th:if="${p.card != null and p.card.color != null}"
+                                      th:class="'badge badge-color-' + ${p.card.color}"
+                                      th:text="${p.card.color}"></span>
                             </div>
-                            <p class="fw-bold mb-0"
-                               th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'COMMA')} + ' đ'"></p>
-                            <small th:class="${p.stock > 0} ? 'text-success' : 'text-danger'"
-                                   th:text="${p.stock > 0} ? 'Còn ' + ${p.stock} : 'Hết hàng'"></small>
 
+                            <!-- Giá tiền & Tồn kho -->
                             <div class="mt-auto pt-2">
-                                <button th:if="${p.stock <= 0}" class="btn btn-sm btn-secondary w-100" disabled>
-                                    Hết hàng</button>
+                                <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                    <span class="price-text"
+                                          th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
+                                    <small th:class="${p.stock > 0} ? 'text-success' : 'text-danger'"
+                                           th:text="${p.stock > 0} ? 'Kho: ' + ${p.stock} : 'Hết hàng'"></small>
+                                </div>
 
-                                <!-- Khách hàng: thêm vào giỏ ngay (thẻ lẻ thêm đúng tình trạng đang hiển thị) -->
+                                <!-- Nút bấm hành động -->
+                                <button th:if="${p.stock <= 0}" class="btn btn-sm btn-outline-secondary w-100" disabled>Hết hàng</button>
+
                                 <form th:if="${p.stock > 0}" sec:authorize="hasRole('CUSTOMER')"
                                       th:action="@{/cart/add}" method="post">
                                     <input type="hidden" name="productId" th:value="${p.id}">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button type="submit" class="btn btn-sm btn-primary w-100"
-                                            th:text="${p.single} ? 'Thêm vào giỏ (' + ${p.cardCondition} + ')' : 'Thêm vào giỏ'"></button>
+                                    <button type="submit" class="btn btn-sm btn-digi w-100">
+                                        + Thêm Giỏ Hàng
+                                    </button>
                                 </form>
 
-                                <!-- Chưa đăng nhập -->
                                 <a th:if="${p.stock > 0}" sec:authorize="!isAuthenticated()" th:href="@{/login}"
-                                   class="btn btn-sm btn-outline-primary w-100">Đăng nhập để mua</a>
-
-                                <!-- Thẻ lẻ: xem các tình trạng khác -->
-                                <a th:if="${p.single}" th:href="@{/products/{id}(id=${p.id})}"
-                                   class="d-block text-center small mt-1">Xem các tình trạng khác</a>
+                                   class="btn btn-sm btn-outline-info w-100">Đăng nhập để mua</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Phân trang (giữ đủ bộ lọc khi chuyển trang) -->
+            <!-- Phân trang (Pagination) -->
             <nav class="mt-4" th:if="${page.totalPages > 1}">
-                <ul class="pagination">
+                <ul class="pagination justify-content-center">
                     <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
                         th:classappend="${i == page.number} ? 'active'">
-                        <a class="page-link"
+                        <a class="page-link bg-dark text-light border-secondary"
                            th:href="@{/cards(page=${i}, keyword=${filter.keyword}, productType=${filter.productType},
                                      setId=${filter.setId}, color=${filter.color}, cardType=${filter.cardType},
                                      rarity=${filter.rarity}, cardCondition=${filter.cardCondition},
@@ -149,5 +175,8 @@
         </main>
     </div>
 </div>
+
+<!-- Chèn dòng này ngay TRƯỚC thẻ </body> -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

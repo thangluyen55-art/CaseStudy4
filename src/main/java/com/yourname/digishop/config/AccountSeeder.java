@@ -25,7 +25,7 @@ public class AccountSeeder implements CommandLineRunner {
         // Tài khoản demo, mật khẩu đều là 123456 (đổi nếu nộp bài thật)
         user("admin@digishop.com", "Quản trị viên", "0900000001", admin);
         user("staff@digishop.com", "Nhân viên", "0900000002", staff);
-        user("customer@digishop.com", "Khách hàng mẫu", "0900000003", customer);
+            user("customer@digishop.com", "Khách hàng mẫu", "0900000003", customer);
     }
 
     private Role role(String name) {

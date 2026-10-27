@@ -2,53 +2,42 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mã giảm giá - DigiShop Admin</title>
+    <title>Quản lý Coupon - DigiShop Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
 <div th:replace="~{layout/admin-layout :: adminNav}"></div>
 
 <div class="container mb-5">
-    <h3 class="mb-3">Mã giảm giá</h3>
+    <h3 class="fw-bold text-info mb-4">Quản Lý Mã Giảm Giá</h3>
     <div th:replace="~{layout/layout :: alerts}"></div>
 
-    <form th:action="@{/admin/coupons}" method="post" class="card card-body mb-4">
-        <h6 class="mb-3">Tạo mã mới</h6>
-        <div class="row g-2">
-            <div class="col-md-3"><input type="text" name="code" class="form-control" placeholder="Mã (vd: SALE20)" required></div>
-            <div class="col-md-2">
-                <select name="discountType" class="form-select">
-                    <option th:each="t : ${types}" th:value="${t}"
-                            th:text="${t.name() == 'PERCENT'} ? 'Theo %' : 'Số tiền'"></option>
-                </select>
-            </div>
-            <div class="col-md-2"><input type="number" name="discountValue" class="form-control" placeholder="Giá trị" min="1" required></div>
-            <div class="col-md-2"><input type="number" name="minOrderValue" class="form-control" placeholder="Đơn tối thiểu" min="0"></div>
-            <div class="col-md-1"><input type="number" name="usageLimit" class="form-control" placeholder="Lượt" min="1"></div>
-            <div class="col-md-2"><input type="date" name="expiresAt" class="form-control"></div>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3 align-self-start">Tạo mã</button>
-    </form>
-
-    <div class="card">
+    <div class="card p-3">
         <div class="table-responsive">
-            <table class="table align-middle mb-0">
-                <thead class="table-light">
-                <tr><th>Mã</th><th>Giảm</th><th>Đơn tối thiểu</th><th>Đã dùng</th><th>Hết hạn</th><th>Trạng thái</th><th></th></tr>
+            <table class="table table-dark align-middle mb-0">
+                <thead>
+                <tr class="table-light">
+                    <th>Mã</th>
+                    <th>Giảm</th>
+                    <th>Đơn Tối Thiểu</th>
+                    <th>Đã Dùng</th>
+                    <th>Hạn Dùng</th>
+                    <th>Trạng Thái</th>
+                    <th>Action</th>
+                </tr>
                 </thead>
                 <tbody>
-                <tr th:each="c : ${coupons}" th:classappend="${!c.active} ? 'table-secondary'">
-                    <td class="fw-bold" th:text="${c.code}"></td>
+                <tr th:each="c : ${coupons}">
+                    <td class="fw-bold text-info" th:text="${c.code}"></td>
                     <td th:text="${c.discountType.name() == 'PERCENT'} ? ${c.discountValue.toBigInteger()} + '%' : ${#numbers.formatDecimal(c.discountValue, 0, 'POINT', 0, 'COMMA')} + ' đ'"></td>
                     <td th:text="${c.minOrderValue != null} ? ${#numbers.formatDecimal(c.minOrderValue, 0, 'POINT', 0, 'COMMA')} + ' đ' : '-'"></td>
                     <td th:text="${c.usedCount} + (${c.usageLimit != null} ? ' / ' + ${c.usageLimit} : '')"></td>
                     <td th:text="${c.expiresAt != null} ? ${#temporals.format(c.expiresAt, 'dd/MM/yyyy')} : 'Không'"></td>
-                    <td th:text="${c.active} ? 'Đang bật' : 'Đã tắt'"></td>
+                    <td th:text="${c.active} ? 'Bật' : 'Tắt'"></td>
                     <td>
                         <form th:action="@{/admin/coupons/{id}/toggle(id=${c.id})}" method="post">
-                            <button class="btn btn-sm btn-outline-secondary"
-                                    th:text="${c.active} ? 'Tắt' : 'Bật'"></button>
+                            <button class="btn btn-sm btn-outline-secondary" th:text="${c.active} ? 'Tắt' : 'Bật'"></button>
                         </form>
                     </td>
                 </tr>

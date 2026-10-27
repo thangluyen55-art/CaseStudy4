@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${product.displayName} + ' - DigiShop'">Chi tiết sản phẩm</title>
+    <title th:text="${product.displayName} + ' - DigiShop TCG'">Chi tiết sản phẩm</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
 <div th:replace="~{layout/layout :: navbar}"></div>
@@ -13,86 +14,90 @@
 <div class="container mb-5">
     <div th:replace="~{layout/layout :: alerts}"></div>
 
-    <a th:href="@{/cards}" class="btn btn-link mb-3">&larr; Quay lại danh sách</a>
+    <a th:href="@{/cards}" class="btn btn-outline-secondary btn-sm mb-4">&larr; Quay lại danh sách</a>
 
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <img th:src="${product.image != null} ? ${product.image} : '/images/no-image.svg'"
-                 onerror="this.onerror=null; this.src='/images/no-image.svg'"
-                 class="img-fluid rounded" th:alt="${product.displayName}">
+    <div class="row g-4">
+        <div class="col-md-5 col-lg-4">
+            <div class="card p-3 text-center">
+                <img th:src="${product.image != null} ? ${product.image} : '/images/no-image.svg'"
+                     onerror="this.onerror=null; this.src='/images/no-image.svg'"
+                     class="img-fluid rounded shadow" th:alt="${product.displayName}">
+            </div>
         </div>
 
-        <div class="col-md-8">
-            <h3 th:text="${product.displayName}"></h3>
-            <span class="badge bg-secondary" th:text="${product.productType}"></span>
+        <div class="col-md-7 col-lg-8">
+            <div class="card p-4">
+                <h3 class="fw-bold text-info" th:text="${product.displayName}"></h3>
+                <div class="d-flex flex-wrap gap-2 my-2">
+                    <span class="badge bg-secondary fs-6" th:text="${product.productType}"></span>
+                    <span th:if="${product.card != null and product.card.color != null}"
+                          th:class="'badge fs-6 badge-color-' + ${product.card.color}"
+                          th:text="${product.card.color}"></span>
+                </div>
 
-            <h4 class="text-danger my-3"
-                th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')} + ' đ'"></h4>
-            <p th:class="${product.stock > 0} ? 'text-success' : 'text-danger'"
-               th:text="${product.stock > 0} ? 'Còn ' + ${product.stock} + ' sản phẩm' : 'Hết hàng'"></p>
+                <h3 class="price-text my-3"
+                    th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')} + ' VNĐ'"></h3>
+                <p th:class="${product.stock > 0} ? 'text-success fw-bold' : 'text-danger fw-bold'"
+                   th:text="${product.stock > 0} ? 'Còn ' + ${product.stock} + ' sản phẩm trong kho' : 'Đã hết hàng'"></p>
 
-            <!-- Thông tin thẻ lẻ -->
-            <table class="table table-sm w-auto" th:if="${product.single and product.card != null}">
-                <tr><th>Mã thẻ</th><td th:text="${product.card.cardCode}"></td></tr>
-                <tr><th>Set</th><td th:text="${product.card.cardSet.code + ' - ' + product.card.cardSet.name}"></td></tr>
-                <tr><th>Loại</th><td th:text="${product.card.cardType}"></td></tr>
-                <tr><th>Màu</th><td th:text="${product.card.color}"></td></tr>
-                <tr><th>Độ hiếm</th><td th:text="${product.card.rarity}"></td></tr>
-                <tr th:if="${product.card.level != null}"><th>Level</th><td th:text="${product.card.level}"></td></tr>
-                <tr th:if="${product.card.playCost != null}"><th>Chi phí</th><td th:text="${product.card.playCost}"></td></tr>
-                <tr th:if="${product.card.dp != null}"><th>DP</th><td th:text="${product.card.dp}"></td></tr>
-                <tr><th>Tình trạng</th><td th:text="${product.cardCondition}"></td></tr>
-                <tr><th>Ngôn ngữ</th><td th:text="${product.language}"></td></tr>
-            </table>
-            <p th:if="${product.single and product.card != null and product.card.effect != null}"
-               class="text-muted" style="white-space: pre-line" th:text="${product.card.effect}"></p>
+                <!-- Thông tin thẻ lẻ -->
+                <table class="table table-dark table-striped my-3" th:if="${product.single and product.card != null}">
+                    <tr><th style="width: 30%;">Mã thẻ</th><td th:text="${product.card.cardCode}"></td></tr>
+                    <tr><th>Bộ bài (Set)</th><td th:text="${product.card.cardSet.code + ' - ' + product.card.cardSet.name}"></td></tr>
+                    <tr><th>Loại thẻ</th><td th:text="${product.card.cardType}"></td></tr>
+                    <tr><th>Màu sắc</th><td th:text="${product.card.color}"></td></tr>
+                    <tr><th>Độ hiếm</th><td th:text="${product.card.rarity}"></td></tr>
+                    <tr th:if="${product.card.level != null}"><th>Level</th><td th:text="${product.card.level}"></td></tr>
+                    <tr th:if="${product.card.playCost != null}"><th>Chi phí Play Cost</th><td th:text="${product.card.playCost}"></td></tr>
+                    <tr th:if="${product.card.dp != null}"><th>Sức mạnh (DP)</th><td th:text="${product.card.dp}"></td></tr>
+                    <tr><th>Tình trạng</th><td class="text-warning fw-bold" th:text="${product.cardCondition}"></td></tr>
+                </table>
 
-            <!-- Thông tin hàng sealed -->
-            <table class="table table-sm w-auto" th:if="${!product.single}">
-                <tr th:if="${product.cardSet != null}">
-                    <th>Set</th><td th:text="${product.cardSet.code + ' - ' + product.cardSet.name}"></td></tr>
-                <tr th:if="${product.packsPerBox != null}"><th>Số gói/hộp</th><td th:text="${product.packsPerBox}"></td></tr>
-                <tr th:if="${product.cardsPerPack != null}"><th>Thẻ/gói</th><td th:text="${product.cardsPerPack}"></td></tr>
-                <tr th:if="${product.cardsPerDeck != null}"><th>Thẻ/bộ</th><td th:text="${product.cardsPerDeck}"></td></tr>
-                <tr><th>Ngôn ngữ</th><td th:text="${product.language}"></td></tr>
-            </table>
+                <div th:if="${product.single and product.card != null and product.card.effect != null}"
+                     class="p-3 bg-dark rounded border border-secondary mb-4">
+                    <h6 class="text-info fw-bold mb-2">Hiệu Ứng Thẻ (Effect):</h6>
+                    <p class="text-light mb-0" style="white-space: pre-line" th:text="${product.card.effect}"></p>
+                </div>
 
-            <!-- Mua hàng -->
-            <div th:if="${product.stock <= 0}" class="alert alert-secondary d-inline-block">Hết hàng</div>
+                <!-- Mua hàng -->
+                <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
+                    <form th:if="${product.stock > 0}" sec:authorize="hasRole('CUSTOMER')"
+                          th:action="@{/cart/add}" method="post" class="d-flex gap-2">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <input type="number" name="quantity" class="form-control" value="1" min="1" th:max="${product.stock}" style="width: 90px;">
+                        <button type="submit" class="btn btn-digi px-4">Thêm Vào Giỏ Hàng</button>
+                    </form>
 
-            <form th:if="${product.stock > 0}" sec:authorize="hasRole('CUSTOMER')"
-                  th:action="@{/cart/add}" method="post" class="d-flex gap-2" style="max-width: 260px;">
-                <input type="hidden" name="productId" th:value="${product.id}">
-                <input type="number" name="quantity" class="form-control" value="1" min="1" th:max="${product.stock}">
-                <button type="submit" class="btn btn-primary text-nowrap">Thêm vào giỏ</button>
-            </form>
+                    <form sec:authorize="hasRole('CUSTOMER')" th:action="@{/wishlist/toggle}" method="post">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <button type="submit" class="btn"
+                                th:classappend="${wishlisted} ? 'btn-danger' : 'btn-outline-danger'"
+                                th:text="${wishlisted} ? '♥ Đã Yêu Thích' : '♡ Yêu Thích'"></button>
+                    </form>
 
-            <form sec:authorize="hasRole('CUSTOMER')" th:action="@{/wishlist/toggle}" method="post" class="d-inline-block mt-2">
-                <input type="hidden" name="productId" th:value="${product.id}">
-                <button type="submit" class="btn"
-                        th:classappend="${wishlisted} ? 'btn-danger' : 'btn-outline-danger'"
-                        th:text="${wishlisted} ? '♥ Đã yêu thích' : '♡ Yêu thích'"></button>
-            </form>
-
-            <a th:if="${product.stock > 0}" sec:authorize="!isAuthenticated()" th:href="@{/login}"
-               class="btn btn-outline-primary">Đăng nhập để mua</a>
+                    <a th:if="${product.stock > 0}" sec:authorize="!isAuthenticated()" th:href="@{/login}"
+                       class="btn btn-outline-info">Đăng nhập để mua hàng</a>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Các tình trạng khác của cùng thẻ -->
-    <div class="mt-4" th:if="${variants.size() > 1}">
-        <h5>Các tình trạng khác của thẻ này</h5>
-        <table class="table table-bordered w-auto">
-            <thead><tr><th>Tình trạng</th><th>Giá</th><th>Tồn kho</th><th></th></tr></thead>
-            <tbody>
-            <tr th:each="v : ${variants}" th:classappend="${v.id == product.id} ? 'table-primary'">
-                <td th:text="${v.cardCondition}"></td>
-                <td th:text="${#numbers.formatDecimal(v.price, 0, 'POINT', 0, 'COMMA')} + ' đ'"></td>
-                <td th:text="${v.stock}"></td>
-                <td><a th:href="@{/products/{id}(id=${v.id})}">Xem</a></td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="mt-5" th:if="${variants.size() > 1}">
+        <h5 class="text-info fw-bold mb-3">Các tình trạng khác của thẻ này</h5>
+        <div class="card p-3">
+            <table class="table table-dark align-middle mb-0">
+                <thead><tr><th>Tình trạng</th><th>Giá</th><th>Kho</th><th>Action</th></tr></thead>
+                <tbody>
+                <tr th:each="v : ${variants}" th:classappend="${v.id == product.id} ? 'table-active'">
+                    <td class="fw-bold text-warning" th:text="${v.cardCondition}"></td>
+                    <td th:text="${#numbers.formatDecimal(v.price, 0, 'POINT', 0, 'COMMA')} + ' VNĐ'"></td>
+                    <td th:text="${v.stock}"></td>
+                    <td><a th:href="@{/products/{id}(id=${v.id})}" class="btn btn-sm btn-outline-info">Xem</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 </body>
