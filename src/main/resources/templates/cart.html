@@ -43,8 +43,6 @@
                                     <div>
                                         <a th:href="@{/products/{id}(id=${item.product.id})}"
                                            th:text="${item.product.displayName}" class="text-decoration-none text-light fw-bold"></a>
-                                        <div class="small text-muted" th:if="${item.product.cardCondition != null}"
-                                             th:text="'Tình trạng: ' + ${item.product.cardCondition}"></div>
                                     </div>
                                 </div>
                             </td>

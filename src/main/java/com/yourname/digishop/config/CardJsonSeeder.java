@@ -25,7 +25,8 @@ public class CardJsonSeeder implements CommandLineRunner {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record CardImport(String cardCode, String name, String cardType, String color,
                              String rarity, Integer level, Integer playCost, Integer dp,
-                             String effect, String setCode, String setName) {}
+                             String effect, String setCode, String setName,
+                             String digimonAttribute, String digimonType, String digimonForm) {}
 
     @Override
     public void run(String... args) throws Exception {
@@ -41,12 +42,18 @@ public class CardJsonSeeder implements CommandLineRunner {
         }
         System.out.println("[CardJsonSeeder] Doc duoc " + list.size() + " the tu cards.json");
 
-        double[] factor = {1.0, 0.85, 0.7, 0.5};
-        CardCondition[] conds = CardCondition.values();      // NM, LP, MP, HP
         int added = 0;
+        int updated = 0;
 
         for (CardImport d : list) {
-            if (cards.findByCardCode(d.cardCode()).isPresent()) continue;   // đã có thì bỏ qua
+            var existing = cards.findByCardCode(d.cardCode());
+            if (existing.isPresent()) {
+                Card c = existing.get();
+                applyDigimonDetails(c, d);
+                cards.save(c);
+                updated++;
+                continue;
+            }
 
             CardSet set = sets.findByCode(d.setCode()).orElseGet(() -> {
                 CardSet s = new CardSet();
@@ -65,25 +72,33 @@ public class CardJsonSeeder implements CommandLineRunner {
             c.setLevel(d.level());
             c.setPlayCost(d.playCost());
             c.setDp(d.dp());
+            applyDigimonDetails(c, d);
             c.setEffect(d.effect() != null && d.effect().length() > 1000
                     ? d.effect().substring(0, 1000) : d.effect());
             cards.save(c);
 
             BigDecimal base = basePrice(c.getRarity());
-            for (int i = 0; i < conds.length; i++) {
-                Product p = new Product();
-                p.setProductType(ProductType.SINGLE);
-                p.setCard(c);
-                p.setCardCondition(conds[i]);
-                p.setLanguage(Language.EN);
-                p.setPrice(base.multiply(BigDecimal.valueOf(factor[i]))
-                        .setScale(0, RoundingMode.HALF_UP));
-                p.setStock(2 + (int) (Math.random() * 8));          // 2 đến 9
-                products.save(p);
-            }
+            Product p = new Product();
+            p.setProductType(ProductType.SINGLE);
+            p.setCard(c);
+            p.setLanguage(Language.EN);
+            p.setPrice(base.setScale(0, RoundingMode.HALF_UP));
+            p.setStock(2 + (int) (Math.random() * 8)); // 2 đến 9
+            products.save(p);
             added++;
         }
-        System.out.println("[CardJsonSeeder] Da them " + added + " the moi.");
+        System.out.println("[CardJsonSeeder] Da them " + added + " the moi; cap nhat thong tin " + updated + " the.");
+    }
+
+
+
+    private void applyDigimonDetails(Card card, CardImport data) {
+        if (data.digimonAttribute() != null && !data.digimonAttribute().isBlank())
+            card.setDigimonAttribute(data.digimonAttribute().trim());
+        if (data.digimonType() != null && !data.digimonType().isBlank())
+            card.setDigimonType(data.digimonType().trim());
+        if (data.digimonForm() != null && !data.digimonForm().isBlank())
+            card.setDigimonForm(data.digimonForm().trim());
     }
 
     // Giá gốc theo độ hiếm (số giả định cho demo, tự chỉnh)

@@ -22,28 +22,19 @@ public class CartController {
         return "cart";
     }
 
-
     @PostMapping("/add")
-    public String add(
-            @RequestParam Long productId,
-            @RequestParam(defaultValue = "1") int quantity,
-            Principal principal,
-            RedirectAttributes ra) {
-
+    public String add(@RequestParam Long productId,
+                      @RequestParam(defaultValue = "1") int quantity,
+                      @RequestHeader(value = "Referer", required = false) String referer,
+                      Principal principal, RedirectAttributes ra) {
         try {
-            cartService.addItem(
-                    principal.getName(), productId, quantity);
-
-            ra.addFlashAttribute(
-                    "message", "Đã thêm vào giỏ hàng");
-
+            cartService.addItem(principal.getName(), productId, quantity);
+            ra.addFlashAttribute("message", "Đã thêm vào giỏ hàng");
         } catch (BusinessException e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
-
-        return "redirect:/cards";
+        return "redirect:" + (referer != null ? referer : "/cards");
     }
-
 
     @PostMapping("/update")
     public String update(@RequestParam Long itemId, @RequestParam int quantity,

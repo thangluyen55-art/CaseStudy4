@@ -34,6 +34,15 @@ public class Card {
     private Integer playCost;
     private Integer dp;
 
+    @Column(length = 100)
+    private String digimonAttribute; // Vaccine, Data, Virus, Free...
+
+    @Column(length = 255)
+    private String digimonType; // Holy Warrior/Royal Knight...
+
+    @Column(length = 100)
+    private String digimonForm; // Rookie, Champion, Ultimate, Mega...
+
     @Column(length = 1000)
     private String effect;
 

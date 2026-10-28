@@ -5,9 +5,7 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "products",
-        uniqueConstraints = @UniqueConstraint(
-                columnNames = {"card_id", "card_condition", "language"}))
+@Table(name = "products")
 @Getter @Setter @NoArgsConstructor
 public class Product {
 
@@ -29,10 +27,6 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id")
     private Card card;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "card_condition")
-    private CardCondition cardCondition;   // NM, LP, MP, HP
 
     // ----- Dùng cho BOOSTER_BOX, BOOSTER_PACK, STARTER_DECK -----
     @ManyToOne(fetch = FetchType.LAZY)
@@ -78,13 +72,13 @@ public class Product {
     @PreUpdate
     private void validateByType() {
         if (isSingle()) {
-            if (card == null || cardCondition == null)
-                throw new IllegalStateException("Thẻ lẻ phải có card và tình trạng thẻ");
+            if (card == null)
+                throw new IllegalStateException("Thẻ lẻ phải gắn với dữ liệu thẻ");
         } else {
             if (name == null || name.isBlank() || cardSet == null || sku == null)
                 throw new IllegalStateException("Hàng sealed phải có sku, tên và set");
-            if (card != null || cardCondition != null)
-                throw new IllegalStateException("Hàng sealed không gắn với thẻ lẻ hay tình trạng");
+            if (card != null)
+                throw new IllegalStateException("Hàng sealed không gắn với thẻ lẻ");
         }
     }
 

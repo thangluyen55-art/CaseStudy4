@@ -10,7 +10,6 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +29,4 @@ public class ProductService {
                 .orElseThrow(() -> new BusinessException("Không tìm thấy sản phẩm #" + id));
     }
 
-    @Transactional(readOnly = true)
-    public List<Product> findVariants(Long cardId) {
-        return repo.findByCardIdAndActiveTrueAndStockGreaterThanOrderByPriceDesc(cardId, 0);
-    }
 }

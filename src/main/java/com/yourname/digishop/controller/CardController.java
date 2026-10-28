@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,7 +31,6 @@ public class CardController {
         model.addAttribute("productTypes", ProductType.values());
         model.addAttribute("colors", CardColor.values());
         model.addAttribute("rarities", Rarity.values());
-        model.addAttribute("conditions", CardCondition.values());
         return "cards";
     }
 
@@ -45,12 +43,7 @@ public class CardController {
         boolean wishlisted = principal != null && wishlistService.contains(principal.getName(), id);
         model.addAttribute("wishlisted", wishlisted);
 
-        // Nếu là thẻ lẻ, lấy các bản tình trạng khác của cùng 1 thẻ (NM, LP, MP, HP)
-        if (product.isSingle() && product.getCard() != null) {
-            model.addAttribute("variants", productService.findVariants(product.getCard().getId()));
-        } else {
-            model.addAttribute("variants", List.of());
-        }
+
 
         return "card-detail";
     }

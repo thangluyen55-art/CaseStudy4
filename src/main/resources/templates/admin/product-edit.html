@@ -21,6 +21,24 @@
                 <label class="form-label" for="name">Tên sản phẩm</label>
                 <input type="text" name="name" class="form-control" th:value="${product.name}">
             </div>
+            <div th:if="${product.single and product.card != null}" class="border border-secondary rounded p-3 mb-3">
+                <h5 class="text-info mb-3">Thông tin Digimon</h5>
+                <div class="mb-3">
+                    <label class="form-label" for="digimonForm">Digimon Form</label>
+                    <input id="digimonForm" type="text" name="digimonForm" class="form-control"
+                           placeholder="Ví dụ: Mega" th:value="${product.card.digimonForm}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="digimonAttribute">Digimon Attribute</label>
+                    <input id="digimonAttribute" type="text" name="digimonAttribute" class="form-control"
+                           placeholder="Ví dụ: Data" th:value="${product.card.digimonAttribute}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="digimonType">Digimon Type</label>
+                    <input id="digimonType" type="text" name="digimonType" class="form-control"
+                           placeholder="Ví dụ: Holy Warrior/Royal Knight" th:value="${product.card.digimonType}">
+                </div>
+            </div>
             <div class="mb-3">
                 <label class="form-label" for="price">Giá bán (VNĐ)</label>
                 <input type="number" name="price" class="form-control" min="1" required th:value="${product.price.toBigInteger()}">

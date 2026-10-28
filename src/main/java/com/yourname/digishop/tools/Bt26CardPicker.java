@@ -115,11 +115,20 @@ public class Bt26CardPicker {
         c.put("level", intOrNull(n, "level"));
         c.put("playCost", intOrNull(n, "play_cost"));
         c.put("dp", intOrNull(n, "dp"));
+        c.put("digimonAttribute", textOrNull(n, "attribute"));
+        c.put("digimonType", textOrNull(n, "type"));
+        c.put("digimonForm", textOrNull(n, "stage"));
         c.put("effect", n.path("main_effect").asText());
         c.put("setCode", setCode);
         c.put("setName", n.path("set_name").isArray() && n.path("set_name").size() > 0
                 ? n.path("set_name").get(0).asText() : setCode);
         return c;
+    }
+
+    private static String textOrNull(JsonNode n, String field) {
+        JsonNode v = n.path(field);
+        if (v.isMissingNode() || v.isNull() || v.asText().isBlank()) return null;
+        return v.asText();
     }
 
     private static Integer intOrNull(JsonNode n, String field) {

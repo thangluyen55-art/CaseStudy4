@@ -44,9 +44,12 @@ public class AdminProductController {
                          @RequestParam int stock,
                          @RequestParam(defaultValue = "false") boolean active,
                          @RequestParam(required = false) String name,
+                         @RequestParam(required = false) String digimonAttribute,
+                         @RequestParam(required = false) String digimonType,
+                         @RequestParam(required = false) String digimonForm,
                          RedirectAttributes ra) {
         try {
-            service.update(id, price, stock, active, name);
+            service.update(id, price, stock, active, name, digimonAttribute, digimonType, digimonForm);
             ra.addFlashAttribute("message", "Đã cập nhật sản phẩm #" + id);
             return "redirect:/admin/products";
         } catch (BusinessException e) {

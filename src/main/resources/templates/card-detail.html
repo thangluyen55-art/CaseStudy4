@@ -55,7 +55,9 @@
                     <tr th:if="${product.card.level != null}"><th>Level</th><td th:text="${product.card.level}"></td></tr>
                     <tr th:if="${product.card.playCost != null}"><th>Chi phí Play Cost</th><td th:text="${product.card.playCost}"></td></tr>
                     <tr th:if="${product.card.dp != null}"><th>Sức mạnh (DP)</th><td th:text="${product.card.dp}"></td></tr>
-                    <tr><th>Tình trạng</th><td class="text-warning fw-bold" th:text="${product.cardCondition}"></td></tr>
+                    <tr><th>Digimon Form</th><td th:text="${product.card.digimonForm != null and !#strings.isEmpty(product.card.digimonForm)} ? ${product.card.digimonForm} : 'Chưa cập nhật'"></td></tr>
+                    <tr><th>Digimon Attribute</th><td th:text="${product.card.digimonAttribute != null and !#strings.isEmpty(product.card.digimonAttribute)} ? ${product.card.digimonAttribute} : 'Chưa cập nhật'"></td></tr>
+                    <tr><th>Digimon Type</th><td th:text="${product.card.digimonType != null and !#strings.isEmpty(product.card.digimonType)} ? ${product.card.digimonType} : 'Chưa cập nhật'"></td></tr>
                 </table>
 
                 <div th:if="${product.single and product.card != null and product.card.effect != null}"
@@ -87,23 +89,6 @@
         </div>
     </div>
 
-    <!-- Các tình trạng khác của cùng thẻ -->
-    <div class="mt-5" th:if="${variants.size() > 1}">
-        <h5 class="text-info fw-bold mb-3">Các tình trạng khác của thẻ này</h5>
-        <div class="card p-3">
-            <table class="table table-dark align-middle mb-0">
-                <thead><tr><th>Tình trạng</th><th>Giá</th><th>Kho</th><th>Action</th></tr></thead>
-                <tbody>
-                <tr th:each="v : ${variants}" th:classappend="${v.id == product.id} ? 'table-active'">
-                    <td class="fw-bold text-warning" th:text="${v.cardCondition}"></td>
-                    <td th:text="${#numbers.formatDecimal(v.price, 0, 'POINT', 0, 'COMMA')} + ' VNĐ'"></td>
-                    <td th:text="${v.stock}"></td>
-                    <td><a th:href="@{/products/{id}(id=${v.id})}" class="btn btn-sm btn-outline-info">Xem</a></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
 <div th:replace="~{layout/layout :: siteFooter}"></div>
 </body>

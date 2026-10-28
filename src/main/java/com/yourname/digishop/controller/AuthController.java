@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Objects;
 
@@ -31,48 +30,18 @@ public class AuthController {
         return "register";
     }
 
-
     @PostMapping("/register")
-    public String register(
-            @Valid @ModelAttribute("form") RegisterForm form,
-            BindingResult result,
-            RedirectAttributes ra) {
+    public String register(@Valid @ModelAttribute("form") RegisterForm form,
+                           BindingResult result, RedirectAttributes ra) {
+        if (!Objects.equals(form.getPassword(), form.getConfirmPassword()))
+            result.rejectValue("confirmPassword", "mismatch", "Mật khẩu nhập lại không khớp");
+        if (userService.emailExists(form.getEmail()))
+            result.rejectValue("email", "exists", "Email này đã được sử dụng");
 
-        if (!Objects.equals(
-                form.getPassword(), form.getConfirmPassword())) {
-            result.rejectValue(
-                    "confirmPassword",
-                    "mismatch",
-                    "Mật khẩu nhập lại không khớp");
-        }
+        if (result.hasErrors()) return "register";
 
-        if (userService.emailExists(form.getEmail())) {
-            result.rejectValue(
-                    "email",
-                    "exists",
-                    "Email này đã được sử dụng");
-        }
-
-        if (result.hasErrors()) {
-            return "register";
-        }
-
-        try {
-            userService.registerCustomer(form);
-        } catch (DataIntegrityViolationException ex) {
-            // Database unique constraint vẫn là lớp bảo vệ cuối cùng.
-            result.rejectValue(
-                    "email",
-                    "exists",
-                    "Email này đã được sử dụng");
-
-            return "register";
-        }
-
-        ra.addFlashAttribute(
-                "message", "Đăng ký thành công, hãy đăng nhập");
-
+        userService.registerCustomer(form);
+        ra.addFlashAttribute("message", "Đăng ký thành công, hãy đăng nhập");
         return "redirect:/login";
     }
-
 }

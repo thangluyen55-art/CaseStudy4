@@ -41,7 +41,8 @@ public class AdminProductService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void update(Long id, BigDecimal price, int stock, boolean active, String name) {
+    public void update(Long id, BigDecimal price, int stock, boolean active, String name,
+                       String digimonAttribute, String digimonType, String digimonForm) {
         if (price == null || price.signum() <= 0)
             throw new BusinessException("Giá phải lớn hơn 0");
         if (stock < 0)
@@ -53,6 +54,17 @@ public class AdminProductService {
         p.setActive(active);
         if (!p.isSingle() && name != null && !name.isBlank())      // chỉ hàng sealed mới đổi tên
             p.setName(name.trim());
+
+        if (p.isSingle() && p.getCard() != null) {
+            p.getCard().setDigimonAttribute(clean(digimonAttribute));
+            p.getCard().setDigimonType(clean(digimonType));
+            p.getCard().setDigimonForm(clean(digimonForm));
+        }
+    }
+
+    private String clean(String value) {
+        if (value == null || value.isBlank()) return null;
+        return value.trim();
     }
 
     @Transactional(rollbackFor = Exception.class)

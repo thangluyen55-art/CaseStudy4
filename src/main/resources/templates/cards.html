@@ -44,7 +44,7 @@
         <div th:replace="~{layout/layout :: alerts}"></div>
 
         <section class="benefit-strip" aria-label="Thông tin cửa hàng">
-            <div class="benefit-item"><span class="benefit-icon">◇</span><div><strong>Thông tin rõ ràng</strong><small>Giá và tình trạng từng sản phẩm</small></div></div>
+            <div class="benefit-item"><span class="benefit-icon">◇</span><div><strong>Thông tin rõ ràng</strong><small>Giá và thông tin từng thẻ</small></div></div>
             <div class="benefit-item"><span class="benefit-icon">⌕</span><div><strong>Lọc đúng nhu cầu</strong><small>Tìm theo set, màu, độ hiếm</small></div></div>
             <div class="benefit-item"><span class="benefit-icon">▣</span><div><strong>Theo dõi đơn hàng</strong><small>Quản lý đơn sau khi đăng nhập</small></div></div>
         </section>
@@ -98,13 +98,6 @@
                             </select>
                         </div>
                         <div class="filter-field">
-                            <label for="cardCondition">Tình trạng thẻ</label>
-                            <select id="cardCondition" name="cardCondition" class="form-select">
-                                <option value="">Tất cả tình trạng</option>
-                                <option th:each="c : ${conditions}" th:value="${c}" th:text="${c}" th:selected="${c == filter.cardCondition}"></option>
-                            </select>
-                        </div>
-                        <div class="filter-field">
                             <label>Khoảng giá (VNĐ)</label>
                             <div class="price-range">
                                 <input type="number" name="minPrice" min="0" class="form-control" aria-label="Giá tối thiểu" placeholder="Từ" th:value="${filter.minPrice}">
@@ -145,7 +138,6 @@
                             <div class="product-info">
                                 <div class="product-badges">
                                     <span th:if="${p.card != null and p.card.color != null}" th:class="'color-dot badge-color-' + ${p.card.color}" th:title="${p.card.color}" th:aria-label="${p.card.color}"></span>
-                                    <span class="product-condition" th:if="${p.cardCondition != null}" th:text="${p.cardCondition}"></span>
                                     <span class="product-color-label" th:if="${p.card != null and p.card.color != null}" th:text="${p.card.color}"></span>
                                 </div>
                                 <h3 class="product-name"><a th:href="@{/products/{id}(id=${p.id})}" th:text="${p.displayName}" th:title="${p.displayName}">Tên sản phẩm</a></h3>
@@ -167,13 +159,13 @@
                     <nav class="mt-4" aria-label="Phân trang" th:if="${page.totalPages > 1}">
                         <ul class="pagination shop-pagination justify-content-center">
                             <li class="page-item" th:classappend="${page.first} ? ' disabled'">
-                                <a class="page-link" th:if="${!page.first}" th:href="@{/cards(page=${page.number - 1}, keyword=${filter.keyword}, productType=${filter.productType}, setId=${filter.setId}, color=${filter.color}, cardType=${filter.cardType}, rarity=${filter.rarity}, cardCondition=${filter.cardCondition}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}" aria-label="Trang trước">‹</a>
+                                <a class="page-link" th:if="${!page.first}" th:href="@{/cards(page=${page.number - 1}, keyword=${filter.keyword}, productType=${filter.productType}, setId=${filter.setId}, color=${filter.color}, cardType=${filter.cardType}, rarity=${filter.rarity}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}" aria-label="Trang trước">‹</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}" th:classappend="${i == page.number} ? ' active'">
-                                <a class="page-link" th:href="@{/cards(page=${i}, keyword=${filter.keyword}, productType=${filter.productType}, setId=${filter.setId}, color=${filter.color}, cardType=${filter.cardType}, rarity=${filter.rarity}, cardCondition=${filter.cardCondition}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}" th:text="${i + 1}" th:aria-current="${i == page.number} ? 'page' : null"></a>
+                                <a class="page-link" th:href="@{/cards(page=${i}, keyword=${filter.keyword}, productType=${filter.productType}, setId=${filter.setId}, color=${filter.color}, cardType=${filter.cardType}, rarity=${filter.rarity}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}" th:text="${i + 1}" th:aria-current="${i == page.number} ? 'page' : null"></a>
                             </li>
                             <li class="page-item" th:classappend="${page.last} ? ' disabled'">
-                                <a class="page-link" th:if="${!page.last}" th:href="@{/cards(page=${page.number + 1}, keyword=${filter.keyword}, productType=${filter.productType}, setId=${filter.setId}, color=${filter.color}, cardType=${filter.cardType}, rarity=${filter.rarity}, cardCondition=${filter.cardCondition}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}" aria-label="Trang tiếp">›</a>
+                                <a class="page-link" th:if="${!page.last}" th:href="@{/cards(page=${page.number + 1}, keyword=${filter.keyword}, productType=${filter.productType}, setId=${filter.setId}, color=${filter.color}, cardType=${filter.cardType}, rarity=${filter.rarity}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}" aria-label="Trang tiếp">›</a>
                             </li>
                         </ul>
                     </nav>

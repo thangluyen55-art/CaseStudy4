@@ -13,7 +13,6 @@ public class ProductFilter {
     private CardColor color;
     private CardType cardType;
     private Rarity rarity;
-    private CardCondition cardCondition;
     private BigDecimal minPrice;
     private BigDecimal maxPrice;
 }

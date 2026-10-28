@@ -41,23 +41,18 @@ public class ProductSpecs {
                 ps.add(cb.equal(card.get("cardType"), f.getCardType()));
             if (f.getRarity() != null)
                 ps.add(cb.equal(card.get("rarity"), f.getRarity()));
-            if (f.getCardCondition() != null)
-                ps.add(cb.equal(root.get("cardCondition"), f.getCardCondition()));
             if (f.getMinPrice() != null)
                 ps.add(cb.greaterThanOrEqualTo(root.get("price"), f.getMinPrice()));
             if (f.getMaxPrice() != null)
                 ps.add(cb.lessThanOrEqualTo(root.get("price"), f.getMaxPrice()));
 
             // ===== Mỗi thẻ chỉ hiện 1 lần =====
-            // Với mỗi thẻ, chỉ giữ sản phẩm có id nhỏ nhất trong các sản phẩm
-            // còn thỏa bộ lọc tình trạng và giá
+            // Với mỗi thẻ, chỉ giữ một sản phẩm đại diện phù hợp với bộ lọc giá.
             Subquery<Long> sub = query.subquery(Long.class);
             Root<Product> p2 = sub.from(Product.class);
             List<Predicate> sp = new ArrayList<>();
             sp.add(cb.equal(p2.get("card"), root.get("card")));
             sp.add(cb.isTrue(p2.get("active")));
-            if (f.getCardCondition() != null)
-                sp.add(cb.equal(p2.get("cardCondition"), f.getCardCondition()));
             if (f.getMinPrice() != null)
                 sp.add(cb.greaterThanOrEqualTo(p2.get("price"), f.getMinPrice()));
             if (f.getMaxPrice() != null)
