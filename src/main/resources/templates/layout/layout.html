@@ -3,41 +3,48 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
-<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
-    <div class="container">
-        <a class="navbar-brand fs-4" th:href="@{/cards}">DIGISHOP TCG</a>
-        <div class="d-flex align-items-center gap-3">
-            <ul class="navbar-nav ms-auto align-items-center flex-row gap-3">
-                <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
-                    <a class="nav-link text-light fw-medium" th:href="@{/cart}">🛒 Giỏ hàng</a></li>
-                <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
-                    <a class="nav-link text-light fw-medium" th:href="@{/wishlist}">♥ Yêu thích</a></li>
-                <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
-                    <a class="nav-link text-light fw-medium" th:href="@{/decks}">🎴 Bộ bài</a></li>
-                <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
-                    <a class="nav-link text-light fw-medium" th:href="@{/orders}">📦 Đơn hàng</a></li>
-                <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a class="nav-link btn btn-sm btn-outline-info text-light px-3" th:href="@{/login}">Đăng nhập</a></li>
-                <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a class="nav-link btn btn-sm btn-digi text-light px-3" th:href="@{/register}">Đăng ký</a></li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <form th:action="@{/logout}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-link nav-link text-muted p-0">
-                            Thoát (<span sec:authentication="name"></span>)
-                        </button>
-                    </form>
-                </li>
-                <li class="nav-item" sec:authorize="hasAnyRole('ADMIN','STAFF')">
-                    <a class="nav-link btn btn-sm btn-warning text-dark font-weight-bold px-3" th:href="@{/admin}">Quản trị</a></li>
-            </ul>
+<nav th:fragment="navbar" class="navbar navbar-custom">
+    <div class="container nav-shell">
+        <a class="navbar-brand brand-lockup" th:href="@{/cards}" aria-label="DigiShop TCG - Trang cửa hàng">
+            <span class="brand-mark" aria-hidden="true">D</span>
+            <span class="brand-copy"><strong>DIGISHOP</strong><small>TRADING CARD STORE</small></span>
+        </a>
+
+        <form class="nav-search" method="get" th:action="@{/cards}" role="search">
+            <label class="visually-hidden" for="nav-keyword">Tìm thẻ bài</label>
+            <span class="search-symbol" aria-hidden="true">⌕</span>
+            <input id="nav-keyword" type="search" name="keyword" placeholder="Tìm Digimon, mã thẻ..." autocomplete="off">
+            <button type="submit" aria-label="Tìm kiếm">Tìm</button>
+        </form>
+
+        <div class="nav-actions">
+            <a class="nav-action" th:href="@{/cards}"><span aria-hidden="true">▦</span><span>Cửa hàng</span></a>
+            <a class="nav-action" sec:authorize="hasRole('CUSTOMER')" th:href="@{/decks}"><span aria-hidden="true">▤</span><span>Bộ bài</span></a>
+            <a class="nav-action" sec:authorize="hasRole('CUSTOMER')" th:href="@{/wishlist}"><span aria-hidden="true">♡</span><span>Yêu thích</span></a>
+            <a class="nav-action nav-cart" sec:authorize="hasRole('CUSTOMER')" th:href="@{/cart}"><span aria-hidden="true">🛒</span><span>Giỏ hàng</span></a>
+            <a class="nav-action" sec:authorize="hasRole('CUSTOMER')" th:href="@{/orders}"><span aria-hidden="true">▣</span><span>Đơn hàng</span></a>
+            <a class="nav-login" sec:authorize="!isAuthenticated()" th:href="@{/login}">Đăng nhập</a>
+            <a class="btn btn-digi nav-register" sec:authorize="!isAuthenticated()" th:href="@{/register}">Tạo tài khoản</a>
+            <a class="nav-admin" sec:authorize="hasAnyRole('ADMIN','STAFF')" th:href="@{/admin}">Quản trị</a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="nav-logout-form">
+                <button type="submit" class="nav-logout">Thoát <span class="nav-user" sec:authentication="name"></span></button>
+            </form>
         </div>
     </div>
 </nav>
 
 <th:block th:fragment="alerts">
-    <div class="alert alert-success border-0 bg-success text-white mb-4" th:if="${message != null}" th:text="${message}"></div>
-    <div class="alert alert-danger border-0 bg-danger text-white mb-4" th:if="${error != null}" th:text="${error}"></div>
+    <div class="alert alert-success site-alert" role="status" th:if="${message != null}" th:text="${message}"></div>
+    <div class="alert alert-danger site-alert" role="alert" th:if="${error != null}" th:text="${error}"></div>
 </th:block>
+
+<footer th:fragment="siteFooter" class="site-footer">
+    <div class="container footer-inner">
+        <a class="footer-brand" th:href="@{/cards}">DIGISHOP <span>TCG</span></a>
+        <p>Góc sưu tầm dành cho những Tamer. Kiểm tra tình trạng và thông tin sản phẩm trước khi đặt hàng.</p>
+        <span class="footer-note">Fan-made case study · Không liên kết với Bandai hoặc Toei Animation.</span>
+    </div>
+</footer>
 
 </body>
 </html>

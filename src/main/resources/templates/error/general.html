@@ -1,0 +1,20 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Đã xảy ra lỗi | DigiShop</title>
+</head>
+<body>
+<main>
+    <h1>Không thể hoàn thành yêu cầu</h1>
+
+    <p th:text="${error}">
+        Đã xảy ra lỗi. Vui lòng thử lại.
+    </p>
+
+    <a th:href="@{/}">Quay về trang chủ</a>
+</main>
+</body>
+</html>

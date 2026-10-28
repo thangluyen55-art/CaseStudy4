@@ -2,28 +2,24 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
-<nav th:fragment="adminNav" class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
-    <div class="container">
-        <a class="navbar-brand fs-4" th:href="@{/admin}">DIGISHOP ADMIN</a>
-        <ul class="navbar-nav me-auto flex-row gap-3">
-            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                <a class="nav-link text-light" th:href="@{/admin/dashboard}">📊 Thống kê</a></li>
-            <li class="nav-item"><a class="nav-link text-light" th:href="@{/admin/orders}">📦 Đơn hàng</a></li>
-            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                <a class="nav-link text-light" th:href="@{/admin/products}">🃏 Sản phẩm</a></li>
-            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                <a class="nav-link text-light" th:href="@{/admin/coupons}">🏷️ Mã giảm giá</a></li>
+<nav th:fragment="adminNav" class="navbar navbar-custom">
+    <div class="container admin-nav-shell">
+        <a class="navbar-brand brand-lockup" th:href="@{/admin}" aria-label="DigiShop quản trị">
+            <span class="brand-mark" aria-hidden="true">D</span>
+            <span class="brand-copy"><strong>DIGISHOP</strong><small>ADMIN CONSOLE</small></span>
+        </a>
+        <ul class="admin-nav-links">
+            <li sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/dashboard}">▦ Thống kê</a></li>
+            <li><a class="nav-link" th:href="@{/admin/orders}">▣ Đơn hàng</a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/products}">▤ Sản phẩm</a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/coupons}">◇ Mã giảm giá</a></li>
         </ul>
-        <ul class="navbar-nav ms-auto align-items-center flex-row gap-3">
-            <li class="nav-item"><a class="nav-link btn btn-sm btn-outline-info text-light px-3" th:href="@{/cards}">Xem Cửa Hàng</a></li>
-            <li class="nav-item">
-                <form th:action="@{/logout}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-link nav-link text-muted p-0">
-                        Đăng xuất (<span sec:authentication="name"></span>)
-                    </button>
-                </form>
-            </li>
-        </ul>
+        <div class="admin-nav-actions">
+            <a class="nav-login" th:href="@{/cards}">← Cửa hàng</a>
+            <form th:action="@{/logout}" method="post" class="m-0">
+                <button type="submit" class="nav-logout">Đăng xuất <span class="nav-user" sec:authentication="name"></span></button>
+            </form>
+        </div>
     </div>
 </nav>
 </body>

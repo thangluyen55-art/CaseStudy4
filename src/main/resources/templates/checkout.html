@@ -19,19 +19,19 @@
             <form th:action="@{/checkout}" th:object="${form}" method="post" class="card p-4">
                 <h5 class="fw-bold text-light mb-3">Thông Tin Giao Hàng</h5>
                 <div class="mb-3">
-                    <label class="form-label">Người nhận</label>
+                    <label class="form-label" for="receiverName">Người nhận</label>
                     <input type="text" th:field="*{receiverName}" class="form-control"
                            th:classappend="${#fields.hasErrors('receiverName')} ? 'is-invalid'">
                     <div class="invalid-feedback" th:errors="*{receiverName}"></div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Số điện thoại</label>
+                    <label class="form-label" for="phone">Số điện thoại</label>
                     <input type="text" th:field="*{phone}" class="form-control"
                            th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'">
                     <div class="invalid-feedback" th:errors="*{phone}"></div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Địa chỉ giao hàng</label>
+                    <label class="form-label" for="address">Địa chỉ giao hàng</label>
                     <textarea th:field="*{address}" rows="3" class="form-control"
                               th:classappend="${#fields.hasErrors('address')} ? 'is-invalid'"></textarea>
                     <div class="invalid-feedback" th:errors="*{address}"></div>
@@ -39,10 +39,10 @@
 
                 <h5 class="fw-bold text-light my-3">Mã Giảm Giá</h5>
                 <div class="input-group mb-1">
-                    <input type="text" th:field="*{couponCode}" id="couponCode" class="form-control" placeholder="Mã giảm giá (nếu có)">
+                    <input type="text" th:field="*{couponCode}" id="couponCode" class="form-control" placeholder="Mã giảm giá (nếu có)" aria-label="Mã giảm giá">
                     <button type="button" class="btn btn-outline-info" id="applyCoupon">Áp dụng</button>
                 </div>
-                <div class="small mb-3" id="couponMsg"></div>
+                <div class="small mb-3" id="couponMsg" aria-live="polite"></div>
 
                 <h5 class="fw-bold text-light mb-3">Phương Thức Thanh Toán</h5>
                 <div class="form-check mb-2">
@@ -120,5 +120,6 @@
         }
     });
 </script>
+<div th:replace="~{layout/layout :: siteFooter}"></div>
 </body>
 </html>

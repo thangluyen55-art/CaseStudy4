@@ -48,7 +48,7 @@
                         <tbody>
                         <tr th:each="dc : ${deck.cards}">
                             <td style="width: 44px;">
-                                <img class="thumb rounded" th:src="'/card-images/' + ${dc.card.cardCode} + '.webp'"
+                                <img class="thumb rounded" th:src="'/card-images/' + ${dc.card.cardCode} + '.webp'" th:alt="${dc.card.name}"
                                      onerror="this.onerror=null; this.src='/images/no-image.svg'" alt="">
                             </td>
                             <td>
@@ -92,8 +92,8 @@
             <div class="row row-cols-2 row-cols-md-3 g-2">
                 <div class="col" th:each="c : ${results}">
                     <div class="tcg-card h-100 p-2 d-flex flex-column">
-                        <img class="deck-img rounded mb-2" th:src="'/card-images/' + ${c.cardCode} + '.webp'"
-                             onerror="this.onerror=null; this.src='/images/no-image.svg'" th:alt="${c.name}" loading="lazy">
+                        <img class="deck-img rounded mb-2" th:src="'/card-images/' + ${c.cardCode} + '.webp'" th:alt="${c.name}"
+                             onerror="this.onerror=null; this.src='/images/no-image.svg'" loading="lazy">
                         <div class="small fw-bold text-light text-truncate" th:text="${c.name}"></div>
                         <div class="small text-muted mb-2" th:text="${c.cardCode}"></div>
                         <form th:action="@{/decks/{id}/add(id=${deck.id})}" method="post" class="mt-auto">
@@ -107,5 +107,6 @@
         </div>
     </div>
 </div>
+<div th:replace="~{layout/layout :: siteFooter}"></div>
 </body>
 </html>

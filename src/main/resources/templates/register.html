@@ -18,31 +18,31 @@
 
         <form th:action="@{/register}" th:object="${form}" method="post" novalidate>
             <div class="mb-3">
-                <label class="form-label">Họ và tên</label>
+                <label class="form-label" for="fullName">Họ và tên</label>
                 <input type="text" th:field="*{fullName}" class="form-control"
                        th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'">
                 <div class="invalid-feedback" th:errors="*{fullName}"></div>
             </div>
             <div class="mb-3">
-                <label class="form-label">Email</label>
+                <label class="form-label" for="email">Email</label>
                 <input type="email" th:field="*{email}" class="form-control"
                        th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
                 <div class="invalid-feedback" th:errors="*{email}"></div>
             </div>
             <div class="mb-3">
-                <label class="form-label">Số điện thoại</label>
+                <label class="form-label" for="phone">Số điện thoại</label>
                 <input type="text" th:field="*{phone}" class="form-control"
                        th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'">
                 <div class="invalid-feedback" th:errors="*{phone}"></div>
             </div>
             <div class="mb-3">
-                <label class="form-label">Mật khẩu</label>
+                <label class="form-label" for="password">Mật khẩu</label>
                 <input type="password" th:field="*{password}" class="form-control"
                        th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
                 <div class="invalid-feedback" th:errors="*{password}"></div>
             </div>
             <div class="mb-3">
-                <label class="form-label">Nhập lại mật khẩu</label>
+                <label class="form-label" for="confirmPassword">Nhập lại mật khẩu</label>
                 <input type="password" th:field="*{confirmPassword}" class="form-control"
                        th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'">
                 <div class="invalid-feedback" th:errors="*{confirmPassword}"></div>

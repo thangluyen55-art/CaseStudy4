@@ -95,17 +95,43 @@ public class OrderService {
         return order;
     }
 
+
     @Transactional(rollbackFor = Exception.class)
     public void cancelOrder(Long orderId, String email) {
-        Order order = getOrderOfUser(orderId, email);
-        if (order.getStatus() != OrderStatus.PENDING)
-            throw new BusinessException("Chỉ hủy được đơn đang chờ xác nhận");
+        Order order = orders.findByIdForUpdate(orderId)
+                .orElseThrow(() ->
+                        new BusinessException("Không tìm thấy đơn hàng"));
 
-        for (OrderItem oi : order.getItems()) {                  // hoàn kho
-            Product p = products.findByIdForUpdate(oi.getProduct().getId()).orElseThrow();
-            p.setStock(p.getStock() + oi.getQuantity());
+        if (!order.getUser().getEmail().equalsIgnoreCase(email)) {
+            throw new BusinessException(
+                    "Bạn không có quyền hủy đơn hàng này");
         }
-        couponService.release(order.getCouponCode());            // hoàn lượt dùng mã
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new BusinessException(
+                    "Chỉ hủy được đơn đang chờ xác nhận");
+        }
+
+        // Khóa sản phẩm và hoàn kho.
+        List<OrderItem> items = new ArrayList<>(order.getItems());
+        items.sort(Comparator.comparing(
+                item -> item.getProduct().getId()));
+
+        for (OrderItem item : items) {
+            Product product = products
+                    .findByIdForUpdate(item.getProduct().getId())
+                    .orElseThrow(() ->
+                            new BusinessException(
+                                    "Không tìm thấy sản phẩm trong đơn"));
+
+            product.setStock(
+                    product.getStock() + item.getQuantity());
+        }
+
+        // Hoàn lượt coupon trong cùng transaction.
+        couponService.release(order.getCouponCode());
+
         order.setStatus(OrderStatus.CANCELLED);
     }
+
 }

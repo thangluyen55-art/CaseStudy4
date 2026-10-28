@@ -4,179 +4,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DigiShop - Digimon Card Game</title>
-    <!-- Bootstrap 5 -->
+    <meta name="theme-color" content="#0b1020">
+    <meta name="description" content="Khám phá thẻ Digimon TCG, booster và sản phẩm sưu tầm tại DigiShop.">
+    <title>DigiShop TCG — Khám phá thẻ bài</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Style CSS tùy chỉnh -->
     <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
-<body>
+<body class="storefront-page">
 <div th:replace="~{layout/layout :: navbar}"></div>
 
-<div class="container py-3">
-    <div th:replace="~{layout/layout :: alerts}"></div>
-
-    <div class="row g-4">
-        <!-- Sidebar bộ lọc (Filter Panel) -->
-        <aside class="col-lg-3">
-            <form method="get" th:action="@{/cards}" class="filter-card p-3">
-                <h5 class="fw-bold mb-3 text-info text-uppercase" style="letter-spacing: 1px;">
-                    <i class="bi bi-funnel"></i> Bộ Lọc Tìm Kiếm
-                </h5>
-
-                <div class="mb-3">
-                    <label class="form-label">Tên hoặc Mã thẻ</label>
-                    <input type="text" name="keyword" class="form-control"
-                           th:value="${filter.keyword}" placeholder="Ví dụ: Agumon, BT1-009...">
+<main>
+    <section class="store-hero">
+        <div class="container hero-inner">
+            <div class="hero-copy">
+                <span class="eyebrow"><span class="eyebrow-dot"></span> YOUR NEXT EVOLUTION STARTS HERE</span>
+                <h1>Tìm lá bài tiếp theo<br><span>cho đội hình của bạn.</span></h1>
+                <p>Khám phá thẻ Digimon, tìm phiên bản phù hợp và xây dựng bộ bài theo phong cách của riêng bạn.</p>
+                <div class="hero-actions">
+                    <a class="btn btn-digi btn-lg" href="#catalog">Khám phá bộ sưu tập <span aria-hidden="true">↘</span></a>
+                    <a class="hero-secondary" th:href="@{/decks}" sec:authorize="hasRole('CUSTOMER')">Mở bộ bài của tôi <span aria-hidden="true">→</span></a>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Loại hàng</label>
-                    <select name="productType" class="form-select">
-                        <option value="">-- Tất cả --</option>
-                        <option th:each="t : ${productTypes}" th:value="${t}" th:text="${t}"
-                                th:selected="${t == filter.productType}"></option>
-                    </select>
+                <div class="hero-highlights">
+                    <div><strong>TCG</strong><span>Thẻ bài & sản phẩm</span></div>
+                    <div><strong>Filter</strong><span>Tìm kiếm chi tiết</span></div>
+                    <div><strong>Wishlist</strong><span>Lưu thẻ yêu thích</span></div>
                 </div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+                <div class="hero-orbit orbit-one"></div>
+                <div class="hero-orbit orbit-two"></div>
+                <div class="hero-card hero-card-back"><span>デジモン</span><strong>TCG</strong></div>
+                <div class="hero-card hero-card-front"><span class="hero-card-chip">DIGITAL MONSTER</span><div class="hero-card-symbol">D</div><strong>EVOLVE<br>YOUR GAME</strong><small>DIGISHOP · TCG</small></div>
+                <span class="hero-spark spark-one">✦</span><span class="hero-spark spark-two">✧</span>
+            </div>
+        </div>
+    </section>
 
-                <div class="mb-3">
-                    <label class="form-label">Bộ thẻ (Set)</label>
-                    <select name="setId" class="form-select">
-                        <option value="">-- Tất cả --</option>
-                        <option th:each="s : ${sets}" th:value="${s.id}"
-                                th:text="${s.code + ' - ' + s.name}"
-                                th:selected="${s.id == filter.setId}"></option>
-                    </select>
+    <div class="container catalog-container">
+        <div th:replace="~{layout/layout :: alerts}"></div>
+
+        <section class="benefit-strip" aria-label="Thông tin cửa hàng">
+            <div class="benefit-item"><span class="benefit-icon">◇</span><div><strong>Thông tin rõ ràng</strong><small>Giá và tình trạng từng sản phẩm</small></div></div>
+            <div class="benefit-item"><span class="benefit-icon">⌕</span><div><strong>Lọc đúng nhu cầu</strong><small>Tìm theo set, màu, độ hiếm</small></div></div>
+            <div class="benefit-item"><span class="benefit-icon">▣</span><div><strong>Theo dõi đơn hàng</strong><small>Quản lý đơn sau khi đăng nhập</small></div></div>
+        </section>
+
+        <section id="catalog" class="catalog-section">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow eyebrow-muted">THE CARD ARCHIVE</span>
+                    <h2>Khám phá bộ sưu tập</h2>
+                    <p>Tìm lá bài, phiên bản hoặc sản phẩm phù hợp với chiến thuật của bạn.</p>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Màu sắc</label>
-                    <select name="color" class="form-select">
-                        <option value="">-- Tất cả màu --</option>
-                        <option th:each="c : ${colors}" th:value="${c}" th:text="${c}"
-                                th:selected="${c == filter.color}"></option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Độ hiếm (Rarity)</label>
-                    <select name="rarity" class="form-select">
-                        <option value="">-- Tất cả độ hiếm --</option>
-                        <option th:each="r : ${rarities}" th:value="${r}" th:text="${r}"
-                                th:selected="${r == filter.rarity}"></option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Tình trạng thẻ</label>
-                    <select name="cardCondition" class="form-select">
-                        <option value="">-- Tất cả tình trạng --</option>
-                        <option th:each="c : ${conditions}" th:value="${c}" th:text="${c}"
-                                th:selected="${c == filter.cardCondition}"></option>
-                    </select>
-                </div>
-
-                <div class="row g-2 mb-3">
-                    <label class="form-label">Khoảng giá (VNĐ)</label>
-                    <div class="col-6">
-                        <input type="number" name="minPrice" class="form-control" placeholder="Tối thiểu" th:value="${filter.minPrice}">
-                    </div>
-                    <div class="col-6">
-                        <input type="number" name="maxPrice" class="form-control" placeholder="Tối đa" th:value="${filter.maxPrice}">
-                    </div>
-                </div>
-
-                <button class="btn btn-digi w-100 py-2 mb-2">Áp Dụng Bộ Lọc</button>
-                <a th:href="@{/cards}" class="btn btn-outline-secondary w-100 btn-sm">Xóa lọc</a>
-            </form>
-        </aside>
-
-        <!-- Danh sách thẻ bài (Main Grid) -->
-        <main class="col-lg-9">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted" th:text="'Tìm thấy ' + ${page.totalElements} + ' thẻ bài'"></span>
+                <div class="catalog-count"><strong th:text="${page.totalElements}">0</strong><span>sản phẩm</span></div>
             </div>
 
-            <div class="alert alert-dark border-secondary text-center py-4" th:if="${page.empty}">
-                Không tìm thấy thẻ bài phù hợp với bộ lọc.
-            </div>
-
-            <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-3">
-                <div class="col" th:each="p : ${page.content}">
-                    <div class="tcg-card h-100 d-flex flex-column">
-                        <!-- Hình ảnh thẻ bài -->
-                        <div class="tcg-img-wrapper">
-                            <a th:href="@{/products/{id}(id=${p.id})}" class="w-100 text-center">
-                                <img th:src="${p.image != null} ? ${p.image} : '/images/no-image.svg'"
-                                     onerror="this.onerror=null; this.src='/images/no-image.svg'"
-                                     class="tcg-card-img" th:alt="${p.displayName}" loading="lazy">
-                            </a>
+            <div class="row g-4 align-items-start">
+                <aside class="col-lg-3 filter-column">
+                    <form method="get" th:action="@{/cards}" class="filter-card">
+                        <div class="filter-heading"><div><span class="filter-kicker">REFINE RESULTS</span><h3>Bộ lọc</h3></div><span class="filter-icon" aria-hidden="true">☷</span></div>
+                        <div class="filter-field">
+                            <label for="keyword">Tên hoặc mã thẻ</label>
+                            <input id="keyword" type="search" name="keyword" class="form-control" th:value="${filter.keyword}" placeholder="Agumon, BT1-009...">
                         </div>
-
-                        <!-- Nội dung thẻ -->
-                        <div class="p-3 d-flex flex-column flex-grow-1">
-                            <h6 class="fw-bold mb-1 text-truncate">
-                                <a th:href="@{/products/{id}(id=${p.id})}" th:text="${p.displayName}"
-                                   class="text-decoration-none text-light" th:title="${p.displayName}"></a>
-                            </h6>
-
-                            <!-- Badges thông tin -->
-                            <div class="d-flex flex-wrap gap-1 mb-2">
-                                <span class="badge bg-secondary" th:text="${p.productType}"></span>
-                                <span class="badge bg-info text-dark" th:if="${p.cardCondition != null}" th:text="${p.cardCondition}"></span>
-                                <span th:if="${p.card != null and p.card.color != null}"
-                                      th:class="'badge badge-color-' + ${p.card.color}"
-                                      th:text="${p.card.color}"></span>
+                        <div class="filter-field">
+                            <label for="productType">Loại sản phẩm</label>
+                            <select id="productType" name="productType" class="form-select">
+                                <option value="">Tất cả loại</option>
+                                <option th:each="t : ${productTypes}" th:value="${t}"
+                                        th:text="${t.name() == 'SINGLE' ? 'Thẻ lẻ' : (t.name() == 'BOOSTER_BOX' ? 'Hộp booster' : (t.name() == 'BOOSTER_PACK' ? 'Gói booster' : 'Starter deck'))}"
+                                        th:selected="${t == filter.productType}"></option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="setId">Bộ thẻ (Set)</label>
+                            <select id="setId" name="setId" class="form-select">
+                                <option value="">Tất cả set</option>
+                                <option th:each="s : ${sets}" th:value="${s.id}" th:text="${s.code + ' — ' + s.name}" th:selected="${s.id == filter.setId}"></option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="color">Màu sắc</label>
+                            <select id="color" name="color" class="form-select">
+                                <option value="">Tất cả màu</option>
+                                <option th:each="c : ${colors}" th:value="${c}" th:text="${c}" th:selected="${c == filter.color}"></option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="rarity">Độ hiếm</label>
+                            <select id="rarity" name="rarity" class="form-select">
+                                <option value="">Tất cả độ hiếm</option>
+                                <option th:each="r : ${rarities}" th:value="${r}" th:text="${r}" th:selected="${r == filter.rarity}"></option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="cardCondition">Tình trạng thẻ</label>
+                            <select id="cardCondition" name="cardCondition" class="form-select">
+                                <option value="">Tất cả tình trạng</option>
+                                <option th:each="c : ${conditions}" th:value="${c}" th:text="${c}" th:selected="${c == filter.cardCondition}"></option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label>Khoảng giá (VNĐ)</label>
+                            <div class="price-range">
+                                <input type="number" name="minPrice" min="0" class="form-control" aria-label="Giá tối thiểu" placeholder="Từ" th:value="${filter.minPrice}">
+                                <span>—</span>
+                                <input type="number" name="maxPrice" min="0" class="form-control" aria-label="Giá tối đa" placeholder="Đến" th:value="${filter.maxPrice}">
                             </div>
+                        </div>
+                        <button type="submit" class="btn btn-digi w-100 filter-submit">Áp dụng bộ lọc <span aria-hidden="true">→</span></button>
+                        <a th:href="@{/cards}" class="filter-reset">Xóa tất cả bộ lọc</a>
+                    </form>
+                </aside>
 
-                            <!-- Giá tiền & Tồn kho -->
-                            <div class="mt-auto pt-2">
-                                <div class="d-flex justify-content-between align-items-baseline mb-2">
-                                    <span class="price-text"
-                                          th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
-                                    <small th:class="${p.stock > 0} ? 'text-success' : 'text-danger'"
-                                           th:text="${p.stock > 0} ? 'Kho: ' + ${p.stock} : 'Hết hàng'"></small>
+                <div class="col-lg-9">
+                    <div class="catalog-toolbar">
+                        <div><span class="toolbar-label">ĐANG HIỂN THỊ</span><strong th:text="${page.totalElements} + ' sản phẩm'">Sản phẩm</strong></div>
+                        <span class="toolbar-note">Giá hiển thị bằng VNĐ</span>
+                    </div>
+
+                    <div class="empty-state" th:if="${page.empty}">
+                        <span class="empty-state-icon">⌕</span>
+                        <h3>Chưa tìm thấy lá bài phù hợp</h3>
+                        <p>Thử đổi từ khóa hoặc bỏ bớt một vài bộ lọc.</p>
+                        <a th:href="@{/cards}" class="btn btn-outline-light">Xóa bộ lọc</a>
+                    </div>
+
+                    <div class="product-grid" th:unless="${page.empty}">
+                        <article class="product-card" th:each="p : ${page.content}">
+                            <a class="product-visual" th:href="@{/products/{id}(id=${p.id})}" th:aria-label="'Xem ' + ${p.displayName}">
+                                <span class="product-type-pill" th:switch="${p.productType}">
+                                    <span th:case="'SINGLE'">Thẻ lẻ</span>
+                                    <span th:case="'BOOSTER_BOX'">Hộp booster</span>
+                                    <span th:case="'BOOSTER_PACK'">Gói booster</span>
+                                    <span th:case="'STARTER_DECK'">Starter deck</span>
+                                </span>
+                                <img th:src="${p.image != null} ? ${p.image} : '/images/no-image.svg'" onerror="this.onerror=null; this.src='/images/no-image.svg'" th:alt="${p.displayName}" loading="lazy">
+                                <span class="product-visual-cta">Xem chi tiết <span aria-hidden="true">↗</span></span>
+                            </a>
+                            <div class="product-info">
+                                <div class="product-badges">
+                                    <span th:if="${p.card != null and p.card.color != null}" th:class="'color-dot badge-color-' + ${p.card.color}" th:title="${p.card.color}" th:aria-label="${p.card.color}"></span>
+                                    <span class="product-condition" th:if="${p.cardCondition != null}" th:text="${p.cardCondition}"></span>
+                                    <span class="product-color-label" th:if="${p.card != null and p.card.color != null}" th:text="${p.card.color}"></span>
                                 </div>
-
-                                <!-- Nút bấm hành động -->
-                                <button th:if="${p.stock <= 0}" class="btn btn-sm btn-outline-secondary w-100" disabled>Hết hàng</button>
-
-                                <form th:if="${p.stock > 0}" sec:authorize="hasRole('CUSTOMER')"
-                                      th:action="@{/cart/add}" method="post">
+                                <h3 class="product-name"><a th:href="@{/products/{id}(id=${p.id})}" th:text="${p.displayName}" th:title="${p.displayName}">Tên sản phẩm</a></h3>
+                                <div class="product-bottom">
+                                    <div><span class="product-price-label">GIÁ BÁN</span><strong class="product-price" th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'COMMA')} + ' ₫'">0 ₫</strong></div>
+                                    <span class="stock-pill" th:classappend="${p.stock > 0} ? ' in-stock' : ' out-stock'" th:text="${p.stock > 0} ? 'Còn ' + ${p.stock} : 'Hết hàng'"></span>
+                                </div>
+                                <form th:if="${p.stock > 0}" sec:authorize="hasRole('CUSTOMER')" th:action="@{/cart/add}" method="post" class="product-buy-form">
                                     <input type="hidden" name="productId" th:value="${p.id}">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button type="submit" class="btn btn-sm btn-digi w-100">
-                                        + Thêm Giỏ Hàng
-                                    </button>
+                                    <button type="submit" class="btn btn-digi product-buy">Thêm vào giỏ <span aria-hidden="true">+</span></button>
                                 </form>
-
-                                <a th:if="${p.stock > 0}" sec:authorize="!isAuthenticated()" th:href="@{/login}"
-                                   class="btn btn-sm btn-outline-info w-100">Đăng nhập để mua</a>
+                                <a th:if="${p.stock > 0}" sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-digi product-buy">Đăng nhập để mua <span aria-hidden="true">→</span></a>
+                                <button th:if="${p.stock <= 0}" class="btn product-buy product-buy-disabled" disabled>Hiện đã hết hàng</button>
                             </div>
-                        </div>
+                        </article>
                     </div>
+
+                    <nav class="mt-4" aria-label="Phân trang" th:if="${page.totalPages > 1}">
+                        <ul class="pagination shop-pagination justify-content-center">
+                            <li class="page-item" th:classappend="${page.first} ? ' disabled'">
+                                <a class="page-link" th:if="${!page.first}" th:href="@{/cards(page=${page.number - 1}, keyword=${filter.keyword}, productType=${filter.productType}, setId=${filter.setId}, color=${filter.color}, cardType=${filter.cardType}, rarity=${filter.rarity}, cardCondition=${filter.cardCondition}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}" aria-label="Trang trước">‹</a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}" th:classappend="${i == page.number} ? ' active'">
+                                <a class="page-link" th:href="@{/cards(page=${i}, keyword=${filter.keyword}, productType=${filter.productType}, setId=${filter.setId}, color=${filter.color}, cardType=${filter.cardType}, rarity=${filter.rarity}, cardCondition=${filter.cardCondition}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}" th:text="${i + 1}" th:aria-current="${i == page.number} ? 'page' : null"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${page.last} ? ' disabled'">
+                                <a class="page-link" th:if="${!page.last}" th:href="@{/cards(page=${page.number + 1}, keyword=${filter.keyword}, productType=${filter.productType}, setId=${filter.setId}, color=${filter.color}, cardType=${filter.cardType}, rarity=${filter.rarity}, cardCondition=${filter.cardCondition}, minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}" aria-label="Trang tiếp">›</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
-
-            <!-- Phân trang (Pagination) -->
-            <nav class="mt-4" th:if="${page.totalPages > 1}">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
-                        th:classappend="${i == page.number} ? 'active'">
-                        <a class="page-link bg-dark text-light border-secondary"
-                           th:href="@{/cards(page=${i}, keyword=${filter.keyword}, productType=${filter.productType},
-                                     setId=${filter.setId}, color=${filter.color}, cardType=${filter.cardType},
-                                     rarity=${filter.rarity}, cardCondition=${filter.cardCondition},
-                                     minPrice=${filter.minPrice}, maxPrice=${filter.maxPrice})}"
-                           th:text="${i + 1}"></a>
-                    </li>
-                </ul>
-            </nav>
-        </main>
+        </section>
     </div>
-</div>
+</main>
 
-<!-- Chèn dòng này ngay TRƯỚC thẻ </body> -->
+<div th:replace="~{layout/layout :: siteFooter}"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

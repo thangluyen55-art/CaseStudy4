@@ -21,7 +21,7 @@
             <div class="card p-3 text-center">
                 <img th:src="${product.image != null} ? ${product.image} : '/images/no-image.svg'"
                      onerror="this.onerror=null; this.src='/images/no-image.svg'"
-                     class="img-fluid rounded shadow" th:alt="${product.displayName}">
+                     class="img-fluid rounded shadow product-detail-image" th:alt="${product.displayName}">
             </div>
         </div>
 
@@ -29,7 +29,12 @@
             <div class="card p-4">
                 <h3 class="fw-bold text-info" th:text="${product.displayName}"></h3>
                 <div class="d-flex flex-wrap gap-2 my-2">
-                    <span class="badge bg-secondary fs-6" th:text="${product.productType}"></span>
+                    <span class="badge bg-secondary fs-6" th:switch="${product.productType}">
+                        <span th:case="'SINGLE'">Thẻ lẻ</span>
+                        <span th:case="'BOOSTER_BOX'">Hộp booster</span>
+                        <span th:case="'BOOSTER_PACK'">Gói booster</span>
+                        <span th:case="'STARTER_DECK'">Starter deck</span>
+                    </span>
                     <span th:if="${product.card != null and product.card.color != null}"
                           th:class="'badge fs-6 badge-color-' + ${product.card.color}"
                           th:text="${product.card.color}"></span>
@@ -64,7 +69,7 @@
                     <form th:if="${product.stock > 0}" sec:authorize="hasRole('CUSTOMER')"
                           th:action="@{/cart/add}" method="post" class="d-flex gap-2">
                         <input type="hidden" name="productId" th:value="${product.id}">
-                        <input type="number" name="quantity" class="form-control" value="1" min="1" th:max="${product.stock}" style="width: 90px;">
+                        <input type="number" name="quantity" class="form-control" value="1" min="1" th:max="${product.stock}" style="width: 90px;" aria-label="Số lượng cần mua">
                         <button type="submit" class="btn btn-digi px-4">Thêm Vào Giỏ Hàng</button>
                     </form>
 
@@ -100,5 +105,6 @@
         </div>
     </div>
 </div>
+<div th:replace="~{layout/layout :: siteFooter}"></div>
 </body>
 </html>

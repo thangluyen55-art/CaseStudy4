@@ -50,8 +50,10 @@ public class AdminOrderService {
 
     @Transactional(rollbackFor = Exception.class)
     public void changeStatus(Long id, OrderStatus next) {
-        Order order = orders.findById(id)
-                .orElseThrow(() -> new BusinessException("Không tìm thấy đơn hàng #" + id));
+        Order order = orders.findByIdForUpdate(id)
+                .orElseThrow(() ->
+                        new BusinessException(
+                                "Không tìm thấy đơn hàng #" + id));
 
         if (!nextStatuses(order.getStatus()).contains(next))
             throw new BusinessException("Không thể chuyển đơn từ " + order.getStatus()

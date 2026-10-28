@@ -54,7 +54,8 @@
                                 <form th:action="@{/cart/update}" method="post" class="d-flex gap-1">
                                     <input type="hidden" name="itemId" th:value="${item.id}">
                                     <input type="number" name="quantity" class="form-control form-control-sm"
-                                           min="0" th:max="${item.product.stock}" th:value="${item.quantity}">
+                                           min="0" th:max="${item.product.stock}" th:value="${item.quantity}"
+                                           th:attr="aria-label=|Số lượng ${item.product.displayName}|">
                                     <button class="btn btn-sm btn-outline-info">Lưu</button>
                                 </form>
                             </td>
@@ -63,7 +64,7 @@
                             <td>
                                 <form th:action="@{/cart/remove}" method="post">
                                     <input type="hidden" name="itemId" th:value="${item.id}">
-                                    <button class="btn btn-sm btn-outline-danger" title="Xóa">&times;</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa sản phẩm" aria-label="Xóa sản phẩm">&times;</button>
                                 </form>
                             </td>
                         </tr>
@@ -91,5 +92,6 @@
         </div>
     </div>
 </div>
+<div th:replace="~{layout/layout :: siteFooter}"></div>
 </body>
 </html>
